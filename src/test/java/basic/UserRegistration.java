@@ -1,10 +1,14 @@
 package basic;
 
+import com.github.javafaker.Faker;
 import io.restassured.RestAssured;
 import io.restassured.response.Response;
 import org.testng.annotations.Test;
 
 public class UserRegistration {
+
+    static String authToken;
+    static String userId;
 
     @Test
     public void adminLogin() {
@@ -23,17 +27,25 @@ public class UserRegistration {
                 .body(payload)
                 .log().all()
                 .post().prettyPeek();
+
+        int actualStatusCode = response.getStatusCode();
+        assert actualStatusCode == 200 : "Status code should be 200";
+        System.out.println("Admin login successful. Status code: " + actualStatusCode);
+        authToken = response.jsonPath().getString("data.token");
     }
 
-    @Test
+    @Test(priority = 2)
     public void userRegistration() {
 
         String apiEndpoint = "/APIDEV/register";
+        String registerEmail = Faker.instance().internet().emailAddress();
+        String firstName = Faker.instance().name().firstName();
+        String lastName = Faker.instance().name().lastName();
         String baseURL = "https://ndosiautomation.co.za";
         String payload = "{\n" +
-                "    \"firstName\":\"Ndi\",\n" +
-                "    \"lastName\":\"Thini\",\n" +
-                "    \"email\":\"ndi@gmail.com\",\n" +
+                "    \"firstName\":\""+firstName+"\",\n" +
+                "    \"lastName\":\""+lastName+"\",\n" +
+                "    \"email\":\""+registerEmail+"\",\n" +
                 "    \"password\":\"SecurePass_123\",\n" +
                 "    \"confirmPassword\":\"SecurePass_123\",\n" +
                 "    \"groupId\":\"5328c91e-fc40-11f0-8e00-5000e6331276\"}";
@@ -42,8 +54,16 @@ public class UserRegistration {
                 .baseUri(baseURL)
                 .basePath(apiEndpoint)
                 .header("Content-Type", "application/json")
+                .header("Authorization", "Bearer " + authToken)
                 .body(payload)
                 .log().all()
                 .post().prettyPeek();
+
+        int actualStatusCode = response.getStatusCode();
+        assert actualStatusCode == 201 : "Status code should be 201";
+        System.out.println("User registration successful. Status code: " + actualStatusCode);
+        userId = response.jsonPath().getString("data.id");
+        System.out.println("Registered user ID: " + userId);
     }
+
 }
