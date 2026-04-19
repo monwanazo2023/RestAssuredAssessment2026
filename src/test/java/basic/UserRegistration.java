@@ -16,7 +16,7 @@ public class UserRegistration {
     public void adminLogin() {
 
         String apiEndpoint = "/APIDEV/login";
-//        String baseURL = "https://ndosiautomation.co.za";
+
         String payload = "{\n" +
                 "  \"email\": \"admin@gmail.com\",\n" +
                 "  \"password\": \"@12345678\"\n" +
@@ -43,7 +43,7 @@ public class UserRegistration {
         registerEmail = Faker.instance().internet().emailAddress();
         String firstName = Faker.instance().name().firstName();
         String lastName = Faker.instance().name().lastName();
-//        String baseURL = "https://ndosiautomation.co.za";
+
         String payload = "{\n" +
                 "    \"firstName\":\"" + firstName + "\",\n" +
                 "    \"lastName\":\"" + lastName + "\",\n" +
