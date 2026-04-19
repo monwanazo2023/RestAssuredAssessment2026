@@ -24,7 +24,7 @@ public class UserRegistrationJourney {
 
     }
 
-    @Test(priority = 2)
+    @Test(dependsOnMethods = "adminLogin")
     public void userRegistration() {
         registrationEmail = Faker.instance().internet().emailAddress();
         firstName = Faker.instance().name().firstName();
@@ -35,10 +35,9 @@ public class UserRegistrationJourney {
                 .assertThat()
                 .statusCode(201)
                 .body("success", equalTo(true));
-        ;
     }
 
-    @Test(priority = 3)
+    @Test(dependsOnMethods = "userRegistration")
     public void approveUserRegistration() {
         APIRequestBuilder.approveRegisteredUser()
                 .then()
@@ -48,7 +47,7 @@ public class UserRegistrationJourney {
                 .body("success", equalTo(true));
     }
 
-    @Test(priority = 4)
+    @Test(dependsOnMethods = "approveUserRegistration")
     public void userLogin() {
 
         APIRequestBuilder.loggedInUser(registrationEmail, "@Secure_Pass")
